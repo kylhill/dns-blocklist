@@ -4,8 +4,8 @@
 # Create a local-zone block list for unbound #
 ##############################################
 
-#DNS_RETURN="always_nxdomain"
-DNS_RETURN="0.0.0.0"
+DNS_RETURN="always_nxdomain"
+#DNS_RETURN="0.0.0.0"
 
 BLOCKLIST_GENERATOR="/opt/dns_blocklist/generate-domains-blocklist.py"
 BLOCKLIST="/var/cache/dns_blocklist/blocklist.txt"
@@ -47,7 +47,7 @@ echo "############################################################" >> "$UNBOUND
 echo "" >> "$UNBOUND_BLOCKLIST"
 
 if [[ "$DNS_RETURN" == "refuse" || "$DNS_RETURN" == "static" || "$DNS_RETURN" == "always_refuse" || "$DNS_RETURN" == "always_nxdomain" || "$DNS_RETURN" == "transparent" || "$DNS_RETURN" == "always_transparent" ]]; then
-  awk -v rtn=$DNS_RETURN '{printf "local-zone: \"%s\" %s.\n", $1, rtn}' < $TMP_FILE >> "$UNBOUND_BLOCKLIST"
+  awk -v rtn=$DNS_RETURN '{printf "local-zone: \"%s.\" %s\n", $1, rtn}' < $TMP_FILE >> "$UNBOUND_BLOCKLIST"
 else
   awk -v ip=$DNS_RETURN '{printf "local-zone: \"%s.\" redirect\nlocal-data: \"%s. 600 IN A %s\"\n", $1, $1, ip}' < $TMP_FILE >> "$UNBOUND_BLOCKLIST"
 fi
