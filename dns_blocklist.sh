@@ -46,7 +46,7 @@ echo "# DO NOT EDIT MANUALLY!                                    #" >> "$UNBOUND
 echo "############################################################" >> "$UNBOUND_BLOCKLIST"
 echo "" >> "$UNBOUND_BLOCKLIST"
 
-if [[ "$DNS_RETURN" == "refuse" || "$DNS_RETURN" == "static" || "$DNS_RETURN" == "always_refuse" || "$DNS_RETURN" == "always_nxdomain" ]]; then
+if [[ "$DNS_RETURN" == "refuse" || "$DNS_RETURN" == "static" || "$DNS_RETURN" == "always_refuse" || "$DNS_RETURN" == "always_nxdomain" || "$DNS_RETURN" == "transparent" || "$DNS_RETURN" == "always_transparent" ]]; then
   awk -v rtn=$DNS_RETURN '{printf "local-zone: \"%s\" %s.\n", $1, rtn}' < $TMP_FILE >> "$UNBOUND_BLOCKLIST"
 else
   awk -v ip=$DNS_RETURN '{printf "local-zone: \"%s.\" redirect\nlocal-data: \"%s. 600 IN A %s\"\n", $1, $1, ip}' < $TMP_FILE >> "$UNBOUND_BLOCKLIST"
