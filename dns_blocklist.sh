@@ -17,6 +17,8 @@ UNBOUND_BLOCKLIST="/etc/unbound/zones/blocklist.conf"
 
 set -e
 
+cd /opt/dns_blocklist
+
 # Clean up any old temporary files
 if [ -f "$TMP_FILE" ]; then
   rm -f $TMP_FILE
