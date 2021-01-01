@@ -36,7 +36,7 @@ if [ "$SHA_PRE" != "$SHA_POST" ]; then
     systemctl force-reload unbound.service
     echo "Allowlist updated, $(wc -l < $UNBOUND_ALLOWLIST) allowed, unbound reloaded"
 else
-  echo "Allowlist not updated"
+  echo "No changes, allowlist not updated"
 fi
 
 exit 0

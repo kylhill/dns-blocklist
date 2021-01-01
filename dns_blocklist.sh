@@ -59,7 +59,7 @@ if [ "$SHA_PRE" != "$SHA_POST" ]; then
     systemctl force-reload unbound.service
     echo "Blocklist updated, $(wc -l < $UNBOUND_BLOCKLIST) blocked, unbound reloaded"
 else
-    echo "Blocklist not updated"
+    echo "No changes, blocklist not updated"
 fi
 
 exit 0
