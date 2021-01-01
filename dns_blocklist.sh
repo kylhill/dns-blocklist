@@ -7,31 +7,35 @@
 DNS_RETURN="always_nxdomain"
 #DNS_RETURN="0.0.0.0"
 
-BLOCKLIST_GENERATOR="/opt/dns_blocklist/generate-domains-blocklist.py"
-BLOCKLIST="/var/cache/dns_blocklist/blocklist.txt"
-
 INTERNAL_ALLOWLIST="localhost\|localhost.localdomain"
 
-TMP_FILE="/var/cache/dns_blocklist/blocklist.tmp"
+CWD="/opt/dns_blocklist/"
+BLOCKLIST_GENERATOR=$CWD"generate-domains-blocklist.py"
+BLOCKLIST="/var/cache/dns_blocklist/blocklist.txt"
 UNBOUND_BLOCKLIST="/etc/unbound/zones/blocklist.conf"
+
+clean_list() {
+    grep -v '^\s*$\|^\s*\#' "$BLOCKLIST" | grep -v $INTERNAL_ALLOWLIST
+}
+
+print_record() {
+    if [[ "$DNS_RETURN" == "deny" || "$DNS_RETURN" == "refuse" || "$DNS_RETURN" == "static" || "$DNS_RETURN" == "transparent" || "$DNS_RETURN" == "always_transparent" || "$DNS_RETURN" == "always_refuse" || "$DNS_RETURN" == "always_nxdomain" ]]; then
+        awk -v rtn=$DNS_RETURN '{printf "local-zone: \"%s\" %s\n", $1, rtn}'
+    else
+        awk -v ip=$DNS_RETURN '{printf "local-zone: \"%s\" redirect\nlocal-data: \"%s A %s\"\n", $1, $1, ip}'
+    fi
+}
 
 set -e
 
-cd /opt/dns_blocklist
-
-# Clean up any old temporary files
-if [ -f "$TMP_FILE" ]; then
-  rm -f $TMP_FILE
-fi
+# Clean up any old files
 if [ -f "$BLOCKLIST" ]; then
   rm -f $BLOCKLIST
 fi
 
 # Generate blocklist
+cd $CWD
 $BLOCKLIST_GENERATOR -o $BLOCKLIST
-
-# Strip comments and newlines, remove hosts from internal allowlist, sort and remove duplicates
-grep -v '^\s*$\|^\s*\#' "$BLOCKLIST" | grep -v $INTERNAL_ALLOWLIST | sort -u > $TMP_FILE
 
 # Backup any existing blocklist
 SHA_PRE=""
@@ -41,39 +45,21 @@ if [ -f "$UNBOUND_BLOCKLIST" ]; then
 fi
 
 # Write the file
-echo "############################################################" >  "$UNBOUND_BLOCKLIST"
-echo "# Ad and malware blocking, generated from dns_blocklist.sh #" >> "$UNBOUND_BLOCKLIST"
-echo "#                                                          #" >> "$UNBOUND_BLOCKLIST"
-echo "# DO NOT EDIT MANUALLY!                                    #" >> "$UNBOUND_BLOCKLIST"
-echo "############################################################" >> "$UNBOUND_BLOCKLIST"
-echo "" >> "$UNBOUND_BLOCKLIST"
-
-if [[ "$DNS_RETURN" == "refuse" || "$DNS_RETURN" == "static" || "$DNS_RETURN" == "always_refuse" || "$DNS_RETURN" == "always_nxdomain" || "$DNS_RETURN" == "transparent" || "$DNS_RETURN" == "always_transparent" ]]; then
-  awk -v rtn=$DNS_RETURN '{printf "local-zone: \"%s.\" %s\n", $1, rtn}' < $TMP_FILE >> "$UNBOUND_BLOCKLIST"
-else
-  awk -v ip=$DNS_RETURN '{printf "local-zone: \"%s.\" redirect\nlocal-data: \"%s. 600 IN A %s\"\n", $1, $1, ip}' < $TMP_FILE >> "$UNBOUND_BLOCKLIST"
-fi
-
-# Change permissions on final file
-chmod 644 "$UNBOUND_BLOCKLIST"
+: > "$UNBOUND_BLOCKLIST"
+clean_list | print_record >> "$UNBOUND_BLOCKLIST"
 
 # Cleanup
-BLOCKED_COUNT=$(wc -l < $TMP_FILE)
-if [ -f "$TMP_FILE" ]; then
-  rm -f $TMP_FILE
-fi
 if [ -f "$BLOCKLIST" ]; then
-  rm -f $BLOCKLIST
+    rm -f $BLOCKLIST
 fi
 
 # Reload unbound, if needed
 SHA_POST=$(shasum "$UNBOUND_BLOCKLIST" | cut -d' ' -f1)
-
 if [ "$SHA_PRE" != "$SHA_POST" ]; then
-  systemctl force-reload unbound.service
-
-  echo "Blocklist updated, $BLOCKED_COUNT blocked, unbound reloaded"
+    systemctl force-reload unbound.service
+    echo "Blocklist updated, $(wc -l < $UNBOUND_BLOCKLIST) blocked, unbound reloaded"
 else
-  echo "Blocklist not updated"
+    echo "Blocklist not updated"
 fi
 
+exit 0
