@@ -9,8 +9,9 @@ DNS_RETURN="always_transparent"
 ALLOWLIST="/opt/dns_blocklist/domains-allowlist.txt"
 UNBOUND_ALLOWLIST="/etc/unbound/zones/allowlist.conf"
 
+# Remove newlines, comments, duplicates and subdomains masked by higher-level domains
 clean_list() {
-    grep -v '^\s*$\|^\s*\#' "$ALLOWLIST"
+    grep -v '^\s*$\|^\s*\#' "$ALLOWLIST" | rev | sort -u | awk 'NR!=1&&substr($0,0,length(p))==p{next}{p=$0".";print}' | rev
 }
 
 print_record() {

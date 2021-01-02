@@ -14,6 +14,7 @@ BLOCKLIST_GENERATOR=$CWD"generate-domains-blocklist.py"
 BLOCKLIST="/var/cache/dns_blocklist/blocklist.txt"
 UNBOUND_BLOCKLIST="/etc/unbound/zones/blocklist.conf"
 
+# Remove commenta and newlines
 clean_list() {
     grep -v '^\s*$\|^\s*\#' "$BLOCKLIST" | grep -v $INTERNAL_ALLOWLIST
 }
