@@ -14,9 +14,12 @@ BLOCKLIST_GENERATOR=$CWD"generate-domains-blocklist.py"
 BLOCKLIST="/var/cache/dns_blocklist/blocklist.txt"
 UNBOUND_BLOCKLIST="/etc/unbound/zones/blocklist.conf"
 
+UNBOUND_CONTROL="/usr/sbin/unbound-control"
+CACHE="/var/cache/dns_blocklist/cache.dmp"
+
 # Remove commenta and newlines
 clean_list() {
-    grep -v '^\s*$\|^\s*\#' "$BLOCKLIST" | grep -v $INTERNAL_ALLOWLIST
+    grep -v '^\s*$\|^\s*\#' "$BLOCKLIST" | grep -v $INTERNAL_ALLOWLIST | sort -u
 }
 
 print_record() {
@@ -57,7 +60,11 @@ fi
 # Reload unbound, if needed
 SHA_POST=$(shasum "$UNBOUND_BLOCKLIST" | cut -d' ' -f1)
 if [ "$SHA_PRE" != "$SHA_POST" ]; then
-    systemctl force-reload unbound.service
+    $UNBOUND_CONTROL dump_cache > $CACHE
+    $UNBOUND_CONTROL -q reload
+    $UNBOUND_CONTROL -q load_cache < $CACHE
+    rm -rf $CACHE
+
     echo "Blocklist updated, $(wc -l < $UNBOUND_BLOCKLIST) blocked, unbound reloaded"
 else
     echo "No changes, blocklist not updated"
