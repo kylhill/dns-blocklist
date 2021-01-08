@@ -291,3 +291,6 @@ s.shopify.com
 
 # Unbreak Pandora on Amazon Echo
 delivery-cdn-cf.adswizz.com
+
+# Unbreak videos on NPR News
+cdn.jwplayer.com

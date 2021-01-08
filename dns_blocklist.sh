@@ -4,7 +4,7 @@
 # Create a local-zone block list for unbound #
 ##############################################
 
-DNS_RETURN="static"
+DNS_RETURN="always_nxdomain"
 #DNS_RETURN="0.0.0.0"
 
 INTERNAL_ALLOWLIST="localhost\|localhost.localdomain"
