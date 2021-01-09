@@ -23,6 +23,10 @@ am.l.tacomafia.net
 io.l.tacomafia.net
 gg.l.tacomafia.net
 gt.l.tacomafia.net
-wpad.l.tacomafia.net
+
 #tv.l.tacomafia.net
 #link.l.tacomafia.net
+
+# Return NXDOMAIN for wapd queries to avoid forwarding them
+wpad.l.tacomafia.net
+
