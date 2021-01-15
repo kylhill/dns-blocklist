@@ -273,6 +273,8 @@ go.skimresources.com
 ###
 # Kyle's custom whitelist entries
 ###
+localhost
+localhost.localdomain
 
 # Unbreak Google Shopping
 www.googleadservices.com

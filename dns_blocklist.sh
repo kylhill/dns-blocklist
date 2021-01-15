@@ -7,8 +7,6 @@
 #DNS_RETURN="always_nxdomain"
 DNS_RETURN="0.0.0.0"
 
-INTERNAL_ALLOWLIST="localhost\|localhost.localdomain"
-
 CWD="/opt/dns_blocklist/"
 BLOCKLIST_GENERATOR=$CWD"generate-domains-blocklist.py"
 BLOCKLIST="/var/cache/dns_blocklist/blocklist.txt"
@@ -17,9 +15,9 @@ UNBOUND_BLOCKLIST="/etc/unbound/zones/blocklist.conf"
 UNBOUND_CONTROL="/usr/sbin/unbound-control"
 CACHE="/var/cache/dns_blocklist/cache.dmp"
 
-# Remove commenta and newlines
+# Remove comments, newlines and duplicates
 clean_list() {
-    grep -v '^\s*$\|^\s*\#' "$BLOCKLIST" | grep -v $INTERNAL_ALLOWLIST | sort -u
+    grep -v '^\s*$\|^\s*\#' "$BLOCKLIST" | sort -u
 }
 
 print_record() {
