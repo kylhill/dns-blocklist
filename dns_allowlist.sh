@@ -18,7 +18,7 @@ clean_list() {
 }
 
 print_record() {
-    awk -v rtn="$DNS_RETURN" '{printf "local-zone: \"%s\" %s\n", $1, rtn}'
+    awk -v rtn="$DNS_RETURN" '{printf "local-zone: \"%s.\" %s\n", $1, rtn}'
 }
 
 set -e
@@ -42,7 +42,7 @@ if [ "$SHA_PRE" != "$SHA_POST" ]; then
     $UNBOUND_CONTROL -q load_cache < $CACHE
     rm -rf $CACHE
 
-    echo "Allowlist updated, $(wc -l < $UNBOUND_ALLOWLIST) allowed, unbound reloaded"
+    echo "Allowlist updated, unbound reloaded"
 else
   echo "No changes, allowlist not updated"
 fi

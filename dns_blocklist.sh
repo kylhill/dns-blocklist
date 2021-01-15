@@ -4,8 +4,8 @@
 # Create a local-zone block list for unbound #
 ##############################################
 
-DNS_RETURN="always_nxdomain"
-#DNS_RETURN="0.0.0.0"
+#DNS_RETURN="always_nxdomain"
+DNS_RETURN="0.0.0.0"
 
 INTERNAL_ALLOWLIST="localhost\|localhost.localdomain"
 
@@ -23,10 +23,10 @@ clean_list() {
 }
 
 print_record() {
-    if [[ "$DNS_RETURN" == "deny" || "$DNS_RETURN" == "refuse" || "$DNS_RETURN" == "static" || "$DNS_RETURN" == "transparent" || "$DNS_RETURN" == "always_transparent" || "$DNS_RETURN" == "always_refuse" || "$DNS_RETURN" == "always_nxdomain" ]]; then
-        awk -v rtn=$DNS_RETURN '{printf "local-zone: \"%s\" %s\n", $1, rtn}'
+    if [[ "$DNS_RETURN" == "deny" || "$DNS_RETURN" == "refuse" || "$DNS_RETURN" == "static" || "$DNS_RETURN" == "always_refuse" || "$DNS_RETURN" == "always_nxdomain" ]]; then
+        awk -v rtn=$DNS_RETURN '{printf "local-zone: \"%s.\" %s\n", $1, rtn}'
     else
-        awk -v ip=$DNS_RETURN '{printf "local-zone: \"%s\" redirect\nlocal-data: \"%s A %s\"\n", $1, $1, ip}'
+        awk -v rtn=$DNS_RETURN '{printf "local-zone: \"%s.\" redirect\nlocal-data: \"%s. 3600 IN A %s\"\n", $1, $1, rtn}'
     fi
 }
 
@@ -65,7 +65,7 @@ if [ "$SHA_PRE" != "$SHA_POST" ]; then
     $UNBOUND_CONTROL -q load_cache < $CACHE
     rm -rf $CACHE
 
-    echo "Blocklist updated, $(wc -l < $UNBOUND_BLOCKLIST) blocked, unbound reloaded"
+    echo "Blocklist updated, unbound reloaded"
 else
     echo "No changes, blocklist not updated"
 fi
