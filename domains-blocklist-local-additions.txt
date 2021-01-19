@@ -27,7 +27,3 @@
 #cloud.l.tacomafia.net
 #link.l.tacomafia.net
 #tv.l.tacomafia.net
-
-# Return NXDOMAIN for wapd queries to avoid forwarding them
-wpad.l.tacomafia.net
-
