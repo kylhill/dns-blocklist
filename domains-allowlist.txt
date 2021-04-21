@@ -299,8 +299,8 @@ delivery-cdn-cf.adswizz.com
 cdn.jwplayer.com
 
 # Stop spamming logs with Amazon Echo "device metrics" reporting
-#device-metrics-us.amazon.com
-#device-metrics-us-2.amazon.com
+device-metrics-us.amazon.com
+device-metrics-us-2.amazon.com
 
 # Stop spamming logs with Roku TV "device metrics" reporting
 logs.roku.com
