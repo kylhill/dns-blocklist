@@ -20,10 +20,15 @@ except (ImportError, ModuleNotFoundError):
     URLLIB_NEW = True
 
 
+log_info = sys.stderr
+log_err = sys.stderr
+
+
 def parse_trusted_list(content):
     rx_comment = re.compile(r"^(#|$)")
     rx_inline_comment = re.compile(r"\s*#\s*[a-z0-9-].*$")
     rx_trusted = re.compile(r"^([*a-z0-9.-]+)\s*(@\S+)?$")
+    rx_timed = re.compile(r".+\s*(@\S+)?$")
 
     names = set()
     time_restrictions = {}
@@ -34,7 +39,7 @@ def parse_trusted_list(content):
         if rx_comment.match(line):
             continue
         line = str.strip(rx_inline_comment.sub("", line))
-        if is_glob(line):
+        if is_glob(line) and not rx_timed.match(line):
             globs.add(line)
             names.add(line)
             continue
@@ -98,7 +103,7 @@ def print_restricted_name(output_fd, name, time_restrictions):
 
 
 def load_from_url(url):
-    sys.stderr.write("Loading data from [{}]\n".format(url))
+    log_info.write("Loading data from [{}]\n".format(url))
     req = urllib.Request(url=url, headers={"User-Agent": "dnscrypt-proxy"})
     trusted = False
 
@@ -201,7 +206,7 @@ def blocklists_from_config_file(
                 all_names |= names
                 all_globs |= globs
             except Exception as e:
-                sys.stderr.write(str(e))
+                log_err.write(str(e))
                 if not ignore_retrieval_failure:
                     exit(1)
 
@@ -322,7 +327,9 @@ args = argp.parse_args()
 
 whitelist = args.whitelist
 if whitelist:
-    print("The option to provide a set of names to exclude from the blocklist has been changed from -w to -a\r\n")
+    print(
+        "The option to provide a set of names to exclude from the blocklist has been changed from -w to -a\n"
+    )
     argp.print_help()
     exit(1)
 
@@ -331,6 +338,8 @@ allowlist = args.allowlist
 time_restricted = args.time_restricted
 ignore_retrieval_failure = args.ignore_retrieval_failure
 output_file = args.output_file
+if output_file:
+    log_info = sys.stdout
 
 blocklists_from_config_file(
     conf, allowlist, time_restricted, ignore_retrieval_failure, output_file
