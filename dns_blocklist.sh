@@ -10,7 +10,7 @@ DNS_RETURN="always_null"
 CWD="/opt/dns_blocklist/"
 BLOCKLIST_GENERATOR=$CWD"generate-domains-blocklist.py"
 BLOCKLIST="/var/cache/dns_blocklist/blocklist.txt"
-UNBOUND_BLOCKLIST="/etc/unbound/zones/blocklist.conf"
+UNBOUND_BLOCKLIST="/etc/unbound/lists.d/02-blocklist.conf"
 
 UNBOUND_CONTROL="/usr/sbin/unbound-control"
 CACHE="/var/cache/dns_blocklist/cache.dmp"

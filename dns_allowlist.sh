@@ -7,7 +7,7 @@
 DNS_RETURN="always_transparent"
 
 ALLOWLIST="/opt/dns_blocklist/domains-allowlist.txt"
-UNBOUND_ALLOWLIST="/etc/unbound/zones/allowlist.conf"
+UNBOUND_ALLOWLIST="/etc/unbound/lists.d/01-allowlist.conf"
 
 UNBOUND_CONTROL="/usr/sbin/unbound-control"
 CACHE="/var/cache/dns_blocklist/cache.dmp"
