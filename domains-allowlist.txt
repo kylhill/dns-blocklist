@@ -100,6 +100,7 @@ t.myvisualiq.net
 datafeedfile.com
 rd.bizrate.com
 c.pepperjamnetwork.com
+lg.provenpixel.com
 
 # Unbreak Pandora on Amazon Echo
 delivery-cdn-cf.adswizz.com
