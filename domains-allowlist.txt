@@ -92,6 +92,7 @@ mpsnare.iesnare.com
 
 # Unbreak Referrals
 goto.walmart.com
+goto.target.com
 api.bam-x.com
 api.narrativ.com
 go.skimlinks.com
@@ -107,10 +108,3 @@ delivery-cdn-cf.adswizz.com
 
 # Unbreak videos on NPR News
 cdn.jwplayer.com
-
-# Stop spamming logs with Amazon Echo "device metrics" reporting
-#device-metrics-us.amazon.com
-#device-metrics-us-2.amazon.com
-
-# Stop spamming logs with Roku TV "device metrics" reporting, stop blinking white LED on TV
-logs.roku.com
