@@ -68,4 +68,7 @@ else
     echo "No changes, blocklist not updated"
 fi
 
+# Ping Healthchecks.io - https://healthchecks.io/docs/monitoring_cron_jobs/
+curl -fsS --retry 5 -o /dev/null https://hc-ping.com/7d09335a-e827-47d0-95b7-48dd490531b2
+
 exit 0
