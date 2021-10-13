@@ -12,9 +12,9 @@ UNBOUND_ALLOWLIST="/etc/unbound/lists.d/01-allowlist.conf"
 UNBOUND_CONTROL="/usr/sbin/unbound-control"
 CACHE="/var/cache/dns_blocklist/cache.dmp"
 
-# Remove newlines, comments, duplicates and subdomains masked by higher-level domains
+# Remove comments, newlines, duplicates and subdomains masked by higher-level domains
 clean_list() {
-    grep -v '^\s*$\|^\s*\#' "$ALLOWLIST" | rev | sort -u | awk 'NR!=1&&substr($0,0,length(p))==p{next}{p=$0".";print}' | rev | sort
+    grep -v '^\s*$\|^\s*\#' "$ALLOWLIST" | rev | sort -u | awk 'NR!=1&&substr($0,0,length(p))==p{next}{p=$0".";print}' | rev | sort -u
 }
 
 print_record() {

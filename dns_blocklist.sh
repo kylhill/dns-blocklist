@@ -5,7 +5,6 @@
 ##############################################
 
 DNS_RETURN="always_null"
-#DNS_RETURN="0.0.0.0"
 
 CWD="/opt/dns_blocklist/"
 BLOCKLIST_GENERATOR=$CWD"generate-domains-blocklist.py"
@@ -21,11 +20,7 @@ clean_list() {
 }
 
 print_record() {
-    if [[ "$DNS_RETURN" == "deny" || "$DNS_RETURN" == "refuse" || "$DNS_RETURN" == "static" || "$DNS_RETURN" == "always_refuse" || "$DNS_RETURN" == "always_nxdomain" || "$DNS_RETURN" == "always_null" ]]; then
-        awk -v rtn=$DNS_RETURN '{printf "local-zone: \"%s.\" %s\n", $1, rtn}'
-    else
-        awk -v rtn=$DNS_RETURN '{printf "local-zone: \"%s.\" redirect\nlocal-data: \"%s. 3600 IN A %s\"\n", $1, $1, rtn}'
-    fi
+    awk -v rtn=$DNS_RETURN '{printf "local-zone: \"%s.\" %s\n", $1, rtn}'
 }
 
 set -e

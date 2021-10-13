@@ -1,4 +1,4 @@
-# anudeepND referral sites - 5/18/2021 - https://github.com/anudeepND/whitelist/blob/master/domains/referral-sites.txt
+# anudeepND referral sites - 10/13/2021 - https://github.com/anudeepND/whitelist/blob/master/domains/referral-sites.txt
 7eer.net
 ad.doubleclick.net
 affiliatefuture.com
